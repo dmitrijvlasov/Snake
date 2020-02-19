@@ -9,17 +9,23 @@ size = SCREEN_WIDTH, SCREEN_HEIGHT = 320, 240  # size of display
 box = pygame.Rect((SCREEN_WIDTH//2) - (BOX_SIZE//2), (SCREEN_HEIGHT//2) - (BOX_SIZE//2), BOX_SIZE, BOX_SIZE)  # give coordinates to square
 apple = pygame.Rect(random.randint(0, (SCREEN_WIDTH - APPLE_SIZE)), random.randint(0, (SCREEN_HEIGHT - APPLE_SIZE)), APPLE_SIZE, APPLE_SIZE)
 # apple = pygame.Rect(120, 80, APPLE_SIZE, APPLE_SIZE)
-move_right = False  # move right by default set to False
-move_left = False
-move_up = False
-move_down = False
+move = False  # move by default set to False
+direction = 0, 0  # direction by default set to 0
 
 BLUE = 0, 0, 255  # Color of display
 RED = 255, 0, 0  # Color of box (square)
 GREEN = 0, 255, 0 # Color of apple
 FPS = 30
-SPEED_X = 5
-SPEED_Y = 5
+SPEED_X = 3
+SPEED_Y = 3
+
+
+def is_point_in_box(square: pygame.Rect, point_x, point_y):
+    if square.x <= point_x <= square.x + square.width and square.y <= point_y <= square.y + square.height:
+        return True
+    else:
+        return False
+
 
 screen = pygame.display.set_mode(size)  # create window
 
@@ -35,72 +41,45 @@ while True:  # loop
             print("Breaking from loop")
             sys.exit()  # then close the window
 
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:  # if in the list there is RIGHT with button pressed
-            move_right = True  # then its true
         if event.type == pygame.KEYUP and event.key == pygame.K_RIGHT:  # if in the list there is RIGHT with button released
-            move_right = False  # then its false
-
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:  # if in the list there is LEFT with button pressed
-            move_left = True
+            move = True
+            direction = (SPEED_X, 0)
         if event.type == pygame.KEYUP and event.key == pygame.K_LEFT:  # if in the list there is LEFT with button released
-            move_left = False
-
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:  # if in the list there is UP with button pressed
-            move_up = True
+            move = True
+            direction = (-SPEED_X, 0)
         if event.type == pygame.KEYUP and event.key == pygame.K_UP:  # if in the list there is UP with button released
-            move_up = False
-
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:  # if in the list there is DOWN with button pressed
-            move_down = True
+            move = True
+            direction = (0, -SPEED_Y)
         if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:  # if in the list there is DOWN with button released
-            move_down = False
+            move = True  # move is True
+            direction = (0, SPEED_Y)  # direction is down
 
-    if move_right is True:  # and box.x + box.width < SCREEN_WIDTH:  # if moving is true and box is less then screen
-        if box.x + box.width >= apple.x > box.x and \
-             box.y <= apple.y + apple.height and \
-             box.y + box.height >= apple.y:
-            print("game end")
-            sys.exit()
-        box.move_ip(SPEED_X, 0)  # then move square
-        print("Moving right")
+    if move is True:
+        box.move_ip(direction[0], direction[1])   # move_ip(0, 0)
 
-    if move_left is True:  # and box.x > 0:
-        if box.x <= apple.x + apple.width < box.x + box.width and \
-             box.y <= apple.y + apple.height and \
-             box.y + box.height >= apple.y:
-            print("game end")
-            sys.exit()
-        box.move_ip(-SPEED_X, 0)  # then move square
-        print("Moving left")
+    is_apple_detected = is_point_in_box(box, apple.x, apple.y)
+    if is_apple_detected:
+        quit()
+    is_apple_detected = is_point_in_box(box, apple.x + apple.width, apple.y)
+    if is_apple_detected:
+        quit()
+    is_apple_detected = is_point_in_box(box, apple.x, apple.y + apple.height)
+    if is_apple_detected:
+        quit()
+    is_apple_detected = is_point_in_box(box, apple.x + apple.width, apple.y + apple.height)
+    if is_apple_detected:
+        quit()
 
-    if move_up is True:  # and box.y > 0:
-        if box.y <= apple.y + apple.height and \
-             box.x <= apple.x + apple.width and \
-             box.x + box.width >= apple.x:
-            print("game end")
-            sys.exit()
-        box.move_ip(0, -SPEED_Y)  # then move square
-        print("Moving up")
-
-    if move_down is True:  # and box.y + box.height < SCREEN_HEIGHT:
-        if box.y + box.height >= apple.y and \
-             box.x <= apple.x + apple.width and \
-             box.x + box.width >= apple.x:
-            print("game end")
-            sys.exit()
-        box.move_ip(0, SPEED_Y)  # then move square
-        print("Moving down")
-
-    if box.x + box.width >= SCREEN_WIDTH:  # if box is more then
+    if box.x + box.width >= SCREEN_WIDTH:  # if box is more, then
         print("Game finito")
         sys.exit()
-    if box.x <= 0:  # if box is more then
+    if box.x <= 0:  # if box is more, then
         print("Game finito")
         sys.exit()
-    if box.y + box.height >= SCREEN_HEIGHT:  # if box is more then
+    if box.y + box.height >= SCREEN_HEIGHT:  # if box is more, then
         print("Game finito")
         sys.exit()
-    if box.y <= 0:  # if box is more then
+    if box.y <= 0:  # if box is more, then
         print("Game finito")
         sys.exit()
 
