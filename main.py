@@ -3,21 +3,24 @@ import random
 
 pygame.init()
 
+ZEROINTENSITY = 0
+MAXINTENSITY = 255
 BOX_SIZE = 15
 APPLE_SIZE = 20
+GREEN = 0, 255, 0 # Color of apple
+BLUE = 0, 0, 255  # Color of display
+RED = 255, 0, 0  # Color of box (square)
+FPS = 30
+SPEED_X = 3
+SPEED_Y = 3
+
 size = SCREEN_WIDTH, SCREEN_HEIGHT = 320, 240  # size of display
 box = pygame.Rect((SCREEN_WIDTH//2) - (BOX_SIZE//2), (SCREEN_HEIGHT//2) - (BOX_SIZE//2), BOX_SIZE, BOX_SIZE)  # give coordinates to square
 apple = pygame.Rect(random.randint(0, (SCREEN_WIDTH - APPLE_SIZE)), random.randint(0, (SCREEN_HEIGHT - APPLE_SIZE)), APPLE_SIZE, APPLE_SIZE)
 # apple = pygame.Rect(120, 80, APPLE_SIZE, APPLE_SIZE)
 move = False  # move by default set to False
 direction = 0, 0  # direction by default set to 0
-
-BLUE = 0, 0, 255  # Color of display
-RED = 255, 0, 0  # Color of box (square)
-GREEN = 0, 255, 0 # Color of apple
-FPS = 30
-SPEED_X = 3
-SPEED_Y = 3
+apple_color = GREEN
 
 
 def is_point_in_box(square: pygame.Rect, point_x, point_y):
@@ -27,12 +30,20 @@ def is_point_in_box(square: pygame.Rect, point_x, point_y):
         return False
 
 
+def get_random_color():
+    r = random.randint(ZEROINTENSITY, MAXINTENSITY)
+    g = random.randint(ZEROINTENSITY, MAXINTENSITY)
+    b = random.randint(ZEROINTENSITY, MAXINTENSITY)
+    rn_color = r, g, b
+    return rn_color
+
+
 screen = pygame.display.set_mode(size)  # create window
 
 while True:  # loop
     screen.fill(BLUE)  # background blue
     pygame.draw.rect(screen, RED, box)  # create a square
-    pygame.draw.rect(screen, GREEN, apple)  # apple
+    pygame.draw.rect(screen, apple_color, apple)  # apple
     pygame.display.flip()  # update screen
 
     for event in pygame.event.get():  # get the list of events
@@ -59,16 +70,16 @@ while True:  # loop
 
     is_apple_detected = is_point_in_box(box, apple.x, apple.y)
     if is_apple_detected:
-        quit()
+        apple_color = get_random_color()
     is_apple_detected = is_point_in_box(box, apple.x + apple.width, apple.y)
     if is_apple_detected:
-        quit()
+        apple_color = get_random_color()
     is_apple_detected = is_point_in_box(box, apple.x, apple.y + apple.height)
     if is_apple_detected:
-        quit()
+        apple_color = get_random_color()
     is_apple_detected = is_point_in_box(box, apple.x + apple.width, apple.y + apple.height)
     if is_apple_detected:
-        quit()
+        apple_color = get_random_color()
 
     if box.x + box.width >= SCREEN_WIDTH:  # if box is more, then
         print("Game finito")
