@@ -1,29 +1,36 @@
-import pygame, sys
+import pygame
+import sys
 import random
 
 pygame.init()
 
-ZEROINTENSITY = 0
-MAXINTENSITY = 255
-BOX_SIZE = 15
-APPLE_SIZE = 20
-GREEN = 0, 255, 0 # Color of apple
-BLUE = 0, 0, 255  # Color of display
+ZEROINTENSITY = 0  # color range from
+MAXINTENSITY = 255  # color range to
+SNAKE_SIZE = 20
+APPLE_SIZE = 15
+GREEN = 0, 255, 0  # Color of apple
+BLUE = 52, 137, 255  # Color of display
 RED = 255, 0, 0  # Color of box (square)
 FPS = 30
 SPEED_X = 3
 SPEED_Y = 3
 
 size = SCREEN_WIDTH, SCREEN_HEIGHT = 320, 240  # size of display
-box = pygame.Rect((SCREEN_WIDTH//2) - (BOX_SIZE//2), (SCREEN_HEIGHT//2) - (BOX_SIZE//2), BOX_SIZE, BOX_SIZE)  # give coordinates to square
+box = pygame.Rect((SCREEN_WIDTH//2) - (SNAKE_SIZE//2), (SCREEN_HEIGHT//2) - (SNAKE_SIZE//2), SNAKE_SIZE, SNAKE_SIZE)  # give coordinates to square
 apple = pygame.Rect(random.randint(0, (SCREEN_WIDTH - APPLE_SIZE)), random.randint(0, (SCREEN_HEIGHT - APPLE_SIZE)), APPLE_SIZE, APPLE_SIZE)
-# apple = pygame.Rect(120, 80, APPLE_SIZE, APPLE_SIZE)
 move = False  # move by default set to False
 direction = 0, 0  # direction by default set to 0
 apple_color = GREEN
 
 
 def is_point_in_box(square: pygame.Rect, point_x, point_y):
+    """
+    Checks for if the snake hits the apple
+    :param square: Snake in a form of rect
+    :param point_x:
+    :param point_y:
+    :return: if the box point_x and point_y is
+    """
     if square.x <= point_x <= square.x + square.width and square.y <= point_y <= square.y + square.height:
         return True
     else:
@@ -31,11 +38,26 @@ def is_point_in_box(square: pygame.Rect, point_x, point_y):
 
 
 def get_random_color():
+    """
+    Gets random color for apple, each time, when snake hits the apple
+    :return: Random color for each - red, green, blue
+    """
     r = random.randint(ZEROINTENSITY, MAXINTENSITY)
     g = random.randint(ZEROINTENSITY, MAXINTENSITY)
     b = random.randint(ZEROINTENSITY, MAXINTENSITY)
     rn_color = r, g, b
     return rn_color
+
+
+def get_random_position():
+    """
+    Gets random position for apple, each time, when snake hits the apple
+    :return: Random x and y in screen range
+    """
+    rn_x = random.randint(0, SCREEN_WIDTH - APPLE_SIZE)
+    rn_y = random.randint(0, SCREEN_HEIGHT - APPLE_SIZE)
+    rn_position = rn_x, rn_y
+    return rn_position
 
 
 screen = pygame.display.set_mode(size)  # create window
@@ -52,46 +74,59 @@ while True:  # loop
             print("Breaking from loop")
             sys.exit()  # then close the window
 
-        if event.type == pygame.KEYUP and event.key == pygame.K_RIGHT:  # if in the list there is RIGHT with button released
+            # if the RIGHT button is in the list of events
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
             move = True
             direction = (SPEED_X, 0)
-        if event.type == pygame.KEYUP and event.key == pygame.K_LEFT:  # if in the list there is LEFT with button released
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:
             move = True
             direction = (-SPEED_X, 0)
-        if event.type == pygame.KEYUP and event.key == pygame.K_UP:  # if in the list there is UP with button released
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
             move = True
             direction = (0, -SPEED_Y)
-        if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:  # if in the list there is DOWN with button released
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
             move = True  # move is True
             direction = (0, SPEED_Y)  # direction is down
 
     if move is True:
-        box.move_ip(direction[0], direction[1])   # move_ip(0, 0)
+        box.move_ip(direction[0], direction[1])   # move_ip(0, 0) make box move
 
-    is_apple_detected = is_point_in_box(box, apple.x, apple.y)
-    if is_apple_detected:
+    apple_detected = is_point_in_box(box, apple.x, apple.y)  # function is equals to variable
+    if apple_detected:
+        apple_color = get_random_color()  # give to apple random color after hit
+        new_position = get_random_position()  # give to apple random position after hit
+        apple.x = new_position[0]  # set position coordinates
+        apple.y = new_position[1]  # set position coordinates
+    apple_detected = is_point_in_box(box, apple.x + apple.width, apple.y)
+    if apple_detected:
         apple_color = get_random_color()
-    is_apple_detected = is_point_in_box(box, apple.x + apple.width, apple.y)
-    if is_apple_detected:
+        new_position = get_random_position()
+        apple.x = new_position[0]
+        apple.y = new_position[1]
+    apple_detected = is_point_in_box(box, apple.x, apple.y + apple.height)
+    if apple_detected:
         apple_color = get_random_color()
-    is_apple_detected = is_point_in_box(box, apple.x, apple.y + apple.height)
-    if is_apple_detected:
+        new_position = get_random_position()
+        apple.x = new_position[0]
+        apple.y = new_position[1]
+    apple_detected = is_point_in_box(box, apple.x + apple.width, apple.y + apple.height)
+    if apple_detected:
         apple_color = get_random_color()
-    is_apple_detected = is_point_in_box(box, apple.x + apple.width, apple.y + apple.height)
-    if is_apple_detected:
-        apple_color = get_random_color()
+        new_position = get_random_position()
+        apple.x = new_position[0]
+        apple.y = new_position[1]
 
-    if box.x + box.width >= SCREEN_WIDTH:  # if box is more, then
-        print("Game finito")
+    if box.x + box.width >= SCREEN_WIDTH:  # if box hits the wall, then
+        print("Game Over, you hit the wall")
+        sys.exit()  # close the game
+    if box.x <= 0:
+        print("Game Over, you hit the wall")
         sys.exit()
-    if box.x <= 0:  # if box is more, then
-        print("Game finito")
+    if box.y + box.height >= SCREEN_HEIGHT:
+        print("Game Over, you hit the wall")
         sys.exit()
-    if box.y + box.height >= SCREEN_HEIGHT:  # if box is more, then
-        print("Game finito")
-        sys.exit()
-    if box.y <= 0:  # if box is more, then
-        print("Game finito")
+    if box.y <= 0:
+        print("Game Over, you hit the wall")
         sys.exit()
 
     pygame.time.Clock().tick(FPS)  # refresh page per sec
