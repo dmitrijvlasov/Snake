@@ -11,8 +11,8 @@ GREEN = 0, 255, 0  # Color of apple
 BLUE = 52, 137, 255  # Color of display
 RED = 255, 0, 0  # Color of snake (square)
 FPS = 30
-SPEED_X = 1
-SPEED_Y = 1
+SPEED_X = 3
+SPEED_Y = 3
 
 size = SCREEN_WIDTH, SCREEN_HEIGHT = 320, 240  # size of display
 # give coordinates to snake
@@ -85,19 +85,19 @@ while True:  # loop
         apple.y = new_position[1]
 
     if snake.x >= SCREEN_WIDTH:  # if snake hits the wall, then
-        snake_new_position = helper_functions.get_normal_position(1, snake.y)
+        snake_new_position = helper_functions.get_normal_position(1 - snake.width, snake.y)
         snake.x = snake_new_position[0]
         snake.y = snake_new_position[1]
     if snake.x + snake.width <= 0:
-        snake_new_position = helper_functions.get_normal_position(SCREEN_WIDTH - SNAKE_SIZE, snake.y)
+        snake_new_position = helper_functions.get_normal_position(SCREEN_WIDTH, snake.y)
         snake.x = snake_new_position[0]
         snake.y = snake_new_position[1]
     if snake.y >= SCREEN_HEIGHT:
-        snake_new_position = helper_functions.get_normal_position(snake.x, 1)
+        snake_new_position = helper_functions.get_normal_position(snake.x, 1 - snake.height)
         snake.x = snake_new_position[0]
         snake.y = snake_new_position[1]
     if snake.y + snake.height <= 0:
-        snake_new_position = helper_functions.get_normal_position(snake.x, SCREEN_HEIGHT - SNAKE_SIZE)
+        snake_new_position = helper_functions.get_normal_position(snake.x, SCREEN_HEIGHT)
         snake.x = snake_new_position[0]
         snake.y = snake_new_position[1]
 
