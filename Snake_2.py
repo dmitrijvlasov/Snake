@@ -5,18 +5,18 @@ pygame.init()
 BLACK = 0, 0, 0
 GREEN = 80, 220, 100
 SNAKE_SIZE = 10
-FPS = 30
+FPS = 20
 WINDOW_SIZE = WIDTH, HEIGHT = 400, 400
-MOVE_X = 5
-MOVE_Y = 5
-snake_head = pygame.Rect(WIDTH//2, HEIGHT//2, SNAKE_SIZE, SNAKE_SIZE)
+MOVE_X = 10
+MOVE_Y = 10
+snake[0] = pygame.Rect(WIDTH//2, HEIGHT//2, SNAKE_SIZE, SNAKE_SIZE)
 snake_body = pygame.Rect((WIDTH//2 + SNAKE_SIZE), HEIGHT//2, SNAKE_SIZE, SNAKE_SIZE)
 snake_tail = pygame.Rect((WIDTH//2 + (SNAKE_SIZE*2)), HEIGHT//2, SNAKE_SIZE, SNAKE_SIZE)
 snake_color = GREEN
 move = False
 direction = 0, 0
 
-snake = [snake_head, snake_body, snake_tail]
+snake = [snake[0], snake_body, snake_tail]
 
 screen = pygame.display.set_mode(WINDOW_SIZE)
 
@@ -44,13 +44,13 @@ while True:
 
     if move is True:
         for number in reversed(range(0, len(snake))):
-            print(number, snake_part)
             if number == 0:
                 snake[number].move_ip(direction[0], direction[1])
             else:
                 part_before = snake[number-1]
                 snake[number].x = part_before.x
                 snake[number].y = part_before.y
+    print(snake)
 
     pygame.display.flip()
     pygame.time.Clock().tick(FPS)

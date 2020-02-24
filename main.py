@@ -54,7 +54,6 @@ while True:  # loop
     if move is True:
         snake.move_ip(direction[0], direction[1])   # move_ip(0, 0) make snake move
 
-    # ---------------------------------------------
     # function is equals to variable
     apple_detected = helper_functions.is_point_in_snake(snake, apple.x, apple.y)
     if apple_detected:
@@ -64,7 +63,6 @@ while True:  # loop
         new_position = helper_functions.get_random_position(0, SCREEN_WIDTH - APPLE_SIZE, 0, SCREEN_HEIGHT - APPLE_SIZE)
         apple.x = new_position[0]  # set position coordinates
         apple.y = new_position[1]  # set position coordinates
-    # ---------------------------------------------
     apple_detected = helper_functions.is_point_in_snake(snake, apple.x + apple.width, apple.y)
     if apple_detected:
         apple_color = helper_functions.get_random_color()
