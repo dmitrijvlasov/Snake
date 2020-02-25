@@ -5,6 +5,7 @@ import helper_functions
 pygame.init()
 
 SNAKE_SIZE = 10
+TAIL_SIZE = 5
 APPLE_SIZE = 10
 GREEN = 0, 255, 0  # Color of apple
 BLUE = 52, 137, 255  # Color of display
@@ -67,24 +68,40 @@ while True:  # loop
         new_position = helper_functions.get_random_position(0, WIDTH - APPLE_SIZE, 0, HEIGHT - APPLE_SIZE)
         apple.x = new_position[0]  # set position coordinates
         apple.y = new_position[1]  # set position coordinates
+        for index in range(0, 10):
+            snake_tail = snake[-1]
+            tail_grow = pygame.Rect(snake_tail.x, snake_tail.y, SNAKE_SIZE, SNAKE_SIZE)
+            snake.append(tail_grow)
     apple_detected = helper_functions.is_point_in_snake(snake[0], apple.x + apple.width, apple.y)
     if apple_detected:
         apple_color = helper_functions.get_random_color()
         new_position = helper_functions.get_random_position(0, WIDTH - APPLE_SIZE, 0, HEIGHT - APPLE_SIZE)
         apple.x = new_position[0]
         apple.y = new_position[1]
+        for index in range(0, 10):
+            snake_tail = snake[-1]
+            tail_grow = pygame.Rect(snake_tail.x, snake_tail.y, SNAKE_SIZE, SNAKE_SIZE)
+            snake.append(tail_grow)
     apple_detected = helper_functions.is_point_in_snake(snake[0], apple.x, apple.y + apple.height)
     if apple_detected:
         apple_color = helper_functions.get_random_color()
         new_position = helper_functions.get_random_position(0, WIDTH - APPLE_SIZE, 0, HEIGHT - APPLE_SIZE)
         apple.x = new_position[0]
         apple.y = new_position[1]
+        for index in range(0, 10):
+            snake_tail = snake[-1]
+            tail_grow = pygame.Rect(snake_tail.x, snake_tail.y, SNAKE_SIZE, SNAKE_SIZE)
+            snake.append(tail_grow)
     apple_detected = helper_functions.is_point_in_snake(snake[0], apple.x + apple.width, apple.y + apple.height)
     if apple_detected:
         apple_color = helper_functions.get_random_color()
         new_position = helper_functions.get_random_position(0, WIDTH - APPLE_SIZE, 0, HEIGHT - APPLE_SIZE)
         apple.x = new_position[0]
         apple.y = new_position[1]
+        for index in range(0, 10):
+            snake_tail = snake[-1]
+            tail_grow = pygame.Rect(snake_tail.x, snake_tail.y, SNAKE_SIZE, SNAKE_SIZE)
+            snake.append(tail_grow)
 
     if snake[0].x >= WIDTH:  # if snake hits the wall, then
         snake_new_position = helper_functions.get_normal_position(1 - snake[0].width, snake[0].y)
