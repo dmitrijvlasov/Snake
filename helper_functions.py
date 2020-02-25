@@ -48,26 +48,3 @@ def get_normal_position(x_pos, y_pos):
     """
     normal_position = x_pos, y_pos
     return normal_position
-
-
-def is_point_in_snake(square: pygame.Rect, point_x, point_y):
-    """
-    Checks for if the snake hits the apple
-    :param square: Snake in a form of rect
-    :param point_x: apple point in range of snake by x
-    :param point_y: apple point in range of snake by y
-    :return: true if apple point inside snake, else false
-    """
-    if square.x <= point_x <= square.x + square.width and square.y <= point_y <= square.y + square.height:
-        return True
-    else:
-        return False
-#
-#
-# def get_apple_detected(apple, min_x, max_x, min_y, max_y, snake):
-#     apple_detected = is_point_in_snake(snake, apple.x, apple.y)
-#     if apple_detected:
-#         apple_color = get_random_color()
-#         new_position = get_random_position(min_x, max_x, min_y, max_y)
-#         apple.x = new_position[0]  # set position coordinates
-#         apple.y = new_position[1]  # set position coordinates
