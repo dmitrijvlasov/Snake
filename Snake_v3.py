@@ -6,24 +6,38 @@ pygame.init()
 
 GREEN = 0, 128, 0
 BLACK = 0, 0, 0
-FPS = 30
-SIZE = 10
+BLUE = 52, 137, 255
+FPS = 120
+SNAKE_SIZE = 10
+APPLE_SIZE = 10
+MOVE = MOVE_X = MOVE_Y = 2
+snake = []
 
 
 class Game:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.apple = pygame.Rect((width // 2), (height // 2), SIZE, SIZE)
+        self.apple = pygame.Rect(random.randint(0, (width - APPLE_SIZE)), random.randint(0, (height - APPLE_SIZE)),
+                                 APPLE_SIZE, APPLE_SIZE)
+        self.snake_color = BLACK
         self.apple_color = GREEN
+        self.move = False
+        self.direction = 0, 0
+        for index in range(0, 100):
+            self.new_part = pygame.Rect((self.width // 2 + (MOVE * index)), self.height // 2, SNAKE_SIZE, SNAKE_SIZE)
+            snake.append(self.new_part)
 
     def run(self):
         size = self.width, self.height
         screen = pygame.display.set_mode(size)
 
         while True:
-            screen.fill(BLACK)
+            screen.fill(BLUE)
             pygame.draw.rect(screen, self.apple_color, self.apple)
+
+            for snake_part in snake:
+                pygame.draw.rect(screen, self.snake_color, snake_part)
 
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
@@ -31,9 +45,97 @@ class Game:
                 if event.type == pygame.QUIT:
                     sys.exit()
 
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:
+                    self.move = True
+                    self.direction = -MOVE_X, 0
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
+                    self.move = True
+                    self.direction = MOVE_X, 0
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
+                    self.move = True
+                    self.direction = 0, -MOVE_Y
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
+                    self.move = True
+                    self.direction = 0, MOVE_Y
+
+            if self.move is True:
+                for number in reversed(range(0, len(snake))):
+                    if number == 0:
+                        snake[number].move_ip(self.direction[0], self.direction[1])
+                    else:
+                        part_before = snake[number - 1]
+                        snake[number].x = part_before.x
+                        snake[number].y = part_before.y
+
+            apple_detected = helper_functions.is_point_in_snake(snake[0], self.apple.x, self.apple.y)
+            if apple_detected:
+                # give to apple random color after hit
+                self.apple_color = helper_functions.get_random_color()
+                # give to apple random position after hit
+                new_position = helper_functions.get_random_position(0, self.width - APPLE_SIZE, 0,
+                                                                    self.height - APPLE_SIZE)
+                self.apple.x = new_position[0]  # set position coordinates
+                self.apple.y = new_position[1]  # set position coordinates
+                for index in range(0, 10):
+                    snake_tail = snake[-1]
+                    tail_grow = pygame.Rect(snake_tail.x, snake_tail.y, SNAKE_SIZE, SNAKE_SIZE)
+                    snake.append(tail_grow)
+            apple_detected = helper_functions.is_point_in_snake(snake[0], self.apple.x + self.apple.width, self.apple.y)
+            if apple_detected:
+                self.apple_color = helper_functions.get_random_color()
+                new_position = helper_functions.get_random_position(0, self.width - APPLE_SIZE, 0,
+                                                                    self.height - APPLE_SIZE)
+                self.apple.x = new_position[0]
+                self.apple.y = new_position[1]
+                for index in range(0, 10):
+                    snake_tail = snake[-1]
+                    tail_grow = pygame.Rect(snake_tail.x, snake_tail.y, SNAKE_SIZE, SNAKE_SIZE)
+                    snake.append(tail_grow)
+            apple_detected = helper_functions.is_point_in_snake(snake[0], self.apple.x, self.apple.y +
+                                                                self.apple.height)
+            if apple_detected:
+                self.apple_color = helper_functions.get_random_color()
+                new_position = helper_functions.get_random_position(0, self.width - APPLE_SIZE, 0,
+                                                                    self.height - APPLE_SIZE)
+                self.apple.x = new_position[0]
+                self.apple.y = new_position[1]
+                for index in range(0, 10):
+                    snake_tail = snake[-1]
+                    tail_grow = pygame.Rect(snake_tail.x, snake_tail.y, SNAKE_SIZE, SNAKE_SIZE)
+                    snake.append(tail_grow)
+            apple_detected = helper_functions.is_point_in_snake(snake[0], self.apple.x + self.apple.width, self.apple.y
+                                                                + self.apple.height)
+            if apple_detected:
+                self.apple_color = helper_functions.get_random_color()
+                new_position = helper_functions.get_random_position(0, self.width - APPLE_SIZE, 0,
+                                                                    self.height - APPLE_SIZE)
+                self.apple.x = new_position[0]
+                self.apple.y = new_position[1]
+                for index in range(0, 10):
+                    snake_tail = snake[-1]
+                    tail_grow = pygame.Rect(snake_tail.x, snake_tail.y, SNAKE_SIZE, SNAKE_SIZE)
+                    snake.append(tail_grow)
+
+            if snake[0].x >= self.width:  # if snake hits the wall, then
+                snake_new_position = helper_functions.get_normal_position(1 - snake[0].width, snake[0].y)
+                snake[0].x = snake_new_position[0]
+                snake[0].y = snake_new_position[1]
+            if snake[0].x + snake[0].width <= 0:
+                snake_new_position = helper_functions.get_normal_position(self.width, snake[0].y)
+                snake[0].x = snake_new_position[0]
+                snake[0].y = snake_new_position[1]
+            if snake[0].y >= self.height:
+                snake_new_position = helper_functions.get_normal_position(snake[0].x, 1 - snake[0].height)
+                snake[0].x = snake_new_position[0]
+                snake[0].y = snake_new_position[1]
+            if snake[0].y + snake[0].height <= 0:
+                snake_new_position = helper_functions.get_normal_position(snake[0].x, self.height)
+                snake[0].x = snake_new_position[0]
+                snake[0].y = snake_new_position[1]
+
             pygame.display.flip()
             pygame.time.Clock().tick(FPS)
 
 
-game = Game(300, 300)
+game = Game(500, 500)
 game.run()
