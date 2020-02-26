@@ -7,19 +7,25 @@ pygame.init()
 GREEN = 0, 128, 0
 BLACK = 0, 0, 0
 BLUE = 52, 137, 255
-FPS = 15
+FPS = 10
 
 
 class Game:
     def __init__(self, width, height):
-        self.SNAKE_SIZE = 10
-        self.APPLE_SIZE = 10
-        self.MOVE = self.MOVE_X = self.MOVE_Y = 11
+        self.SNAKE_SIZE = 20
+        self.APPLE_SIZE = 20
+        self.MOVE = self.MOVE_X = self.MOVE_Y = 21
         self.snake = []
         self.width = width
         self.height = height
-        self.apple = pygame.Rect(random.randint(0, (width - self.APPLE_SIZE)),
-                                 random.randint(0, (height - self.APPLE_SIZE)), self.APPLE_SIZE, self.APPLE_SIZE)
+        # Load image into apple variable
+        self.apple = pygame.image.load("RedApple_1.png")
+        # Update apple variable with new smaller image
+        self.apple = pygame.transform.scale(self.apple, (self.APPLE_SIZE, self.APPLE_SIZE))
+        # get apple's rectangle
+        self.apple_rect = self.apple.get_rect()
+        self.apple_rect.center = random.randint(0, (width - self.APPLE_SIZE)),\
+                                 random.randint(0, (height - self.APPLE_SIZE))
         self.snake_color = BLACK
         self.apple_color = GREEN
         self.move = False
@@ -65,51 +71,51 @@ class Game:
                 self.snake[number].y = part_before.y
 
     def detects_apple(self):
-        apple_detected = helper_functions.is_point_in_snake(self.snake[0], self.apple.x, self.apple.y)
+        apple_detected = helper_functions.is_point_in_snake(self.snake[0], self.apple_rect.x, self.apple_rect.y)
         if apple_detected:
             # give to apple random color after hit
             self.apple_color = helper_functions.get_random_color()
             # give to apple random position after hit
             new_position = helper_functions.get_random_position(0, self.width - self.APPLE_SIZE, 0,
                                                                 self.height - self.APPLE_SIZE)
-            self.apple.x = new_position[0]  # set position coordinates
-            self.apple.y = new_position[1]  # set position coordinates
+            self.apple_rect.x = new_position[0]  # set position coordinates
+            self.apple_rect.y = new_position[1]  # set position coordinates
             for index in range(0, 1):
                 snake_tail = self.snake[-1]
                 tail_grow = pygame.Rect(snake_tail.x, snake_tail.y, self.SNAKE_SIZE, self.SNAKE_SIZE)
                 self.snake.append(tail_grow)
-        apple_detected = helper_functions.is_point_in_snake(self.snake[0], self.apple.x + self.apple.width,
-                                                            self.apple.y)
+        apple_detected = helper_functions.is_point_in_snake(self.snake[0], self.apple_rect.x + self.apple_rect.width,
+                                                            self.apple_rect.y)
         if apple_detected:
             self.apple_color = helper_functions.get_random_color()
             new_position = helper_functions.get_random_position(0, self.width - self.APPLE_SIZE, 0,
                                                                 self.height - self.APPLE_SIZE)
-            self.apple.x = new_position[0]
-            self.apple.y = new_position[1]
+            self.apple_rect.x = new_position[0]
+            self.apple_rect.y = new_position[1]
             for index in range(0, 1):
                 snake_tail = self.snake[-1]
                 tail_grow = pygame.Rect(snake_tail.x, snake_tail.y, self.SNAKE_SIZE, self.SNAKE_SIZE)
                 self.snake.append(tail_grow)
-        apple_detected = helper_functions.is_point_in_snake(self.snake[0], self.apple.x, self.apple.y +
-                                                            self.apple.height)
+        apple_detected = helper_functions.is_point_in_snake(self.snake[0], self.apple_rect.x, self.apple_rect.y +
+                                                            self.apple_rect.height)
         if apple_detected:
             self.apple_color = helper_functions.get_random_color()
             new_position = helper_functions.get_random_position(0, self.width - self.APPLE_SIZE, 0,
                                                                 self.height - self.APPLE_SIZE)
-            self.apple.x = new_position[0]
-            self.apple.y = new_position[1]
+            self.apple_rect.x = new_position[0]
+            self.apple_rect.y = new_position[1]
             for index in range(0, 1):
                 snake_tail = self.snake[-1]
                 tail_grow = pygame.Rect(snake_tail.x, snake_tail.y, self.SNAKE_SIZE, self.SNAKE_SIZE)
                 self.snake.append(tail_grow)
-        apple_detected = helper_functions.is_point_in_snake(self.snake[0], self.apple.x + self.apple.width, self.apple.y
-                                                            + self.apple.height)
+        apple_detected = helper_functions.is_point_in_snake(self.snake[0], self.apple_rect.x + self.apple_rect.width,
+                                                            self.apple_rect.y + self.apple_rect.height)
         if apple_detected:
             self.apple_color = helper_functions.get_random_color()
             new_position = helper_functions.get_random_position(0, self.width - self.APPLE_SIZE, 0,
                                                                 self.height - self.APPLE_SIZE)
-            self.apple.x = new_position[0]
-            self.apple.y = new_position[1]
+            self.apple_rect.x = new_position[0]
+            self.apple_rect.y = new_position[1]
             for index in range(0, 1):
                 snake_tail = self.snake[-1]
                 tail_grow = pygame.Rect(snake_tail.x, snake_tail.y, self.SNAKE_SIZE, self.SNAKE_SIZE)
@@ -169,7 +175,7 @@ class Game:
 
         while True:
             self.screen.fill(BLUE)
-            pygame.draw.rect(self.screen, self.apple_color, self.apple)
+            self.screen.blit(self.apple, self.apple_rect)
 
             self.snake_hit_it_self()
 
@@ -188,5 +194,5 @@ class Game:
             pygame.time.Clock().tick(FPS)
 
 
-game = Game(500, 500)
+game = Game(800, 600)
 game.run()
