@@ -24,22 +24,36 @@ class Game:
         self.apple = pygame.transform.scale(self.apple, (self.APPLE_SIZE, self.APPLE_SIZE))
         # get apple's rectangle
         self.apple_rect = self.apple.get_rect()
-        self.apple_rect.center = random.randint(0, (width - self.APPLE_SIZE)),\
-                                 random.randint(0, (height - self.APPLE_SIZE))
+        self.apple_rect.center = random.randint(0, (width -
+                                                    self.APPLE_SIZE)), random.randint(0, (height - self.APPLE_SIZE))
         self.snake_color = BLACK
         self.apple_color = GREEN
         self.move = False
         self.direction = 0, 0
-        size = self.width, self.height
-        self.screen = pygame.display.set_mode(size)
+        self.size = self.width, self.height
+        self.screen = pygame.display.set_mode(self.size)
+        self.snake_head = pygame.image.load("head.png")
+        self.snake_head = pygame.transform.scale(self.snake_head, (self.SNAKE_SIZE, self.SNAKE_SIZE))
+        self.flipped_snake_head = pygame.transform.rotate(self.snake_head, 0)
+        self.snake_body = pygame.image.load("body.png")
+        self.snake_body = pygame.transform.scale(self.snake_body, (self.SNAKE_SIZE, self.SNAKE_SIZE))
+        self.flipped_snake_body = pygame.transform.rotate(self.snake_body, 0)
+        self.snake_tail = pygame.image.load("tail.png")
+        self.snake_tail = pygame.transform.scale(self.snake_tail, (self.SNAKE_SIZE, self.SNAKE_SIZE))
+        self.flipped_snake_tail = pygame.transform.rotate(self.snake_tail, 0)
         for index in range(0, 10):
             self.new_part = pygame.Rect((self.width // 2 + (self.MOVE * index)), self.height // 2, self.SNAKE_SIZE,
                                         self.SNAKE_SIZE)
             self.snake.append(self.new_part)
 
     def draw_snake(self):
-        for snake_part in self.snake:
-            pygame.draw.rect(self.screen, self.snake_color, snake_part)
+        for index, snake_part in enumerate(self.snake):
+            if index == 0:
+                self.screen.blit(self.flipped_snake_head, snake_part)
+            elif index == len(self.snake) - 1:
+                self.screen.blit(self.flipped_snake_tail, snake_part)
+            else:
+                self.screen.blit(self.flipped_snake_body, snake_part)
 
     def check_button_pressed(self):
         for event in pygame.event.get():
@@ -51,15 +65,19 @@ class Game:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:
                 self.move = True
                 self.direction = -self.MOVE_X, 0
+                self.flipped_snake_head = pygame.transform.rotate(self.snake_head, 0)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
                 self.move = True
                 self.direction = self.MOVE_X, 0
+                self.flipped_snake_head = pygame.transform.rotate(self.snake_head, 180)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
                 self.move = True
                 self.direction = 0, -self.MOVE_Y
+                self.flipped_snake_head = pygame.transform.rotate(self.snake_head, 270)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
                 self.move = True
                 self.direction = 0, self.MOVE_Y
+                self.flipped_snake_head = pygame.transform.rotate(self.snake_head, 90)
 
     def move_snake(self):
         for number in reversed(range(0, len(self.snake))):
@@ -67,6 +85,20 @@ class Game:
                 self.snake[number].move_ip(self.direction[0], self.direction[1])
             else:
                 part_before = self.snake[number - 1]
+                if part_before.x != self.snake[number].x:
+                    self.flipped_snake_body = pygame.transform.rotate(self.snake_body, 0)
+                if part_before.x < self.snake[number].x:
+                    self.flipped_snake_tail = pygame.transform.rotate(self.snake_tail, 0)
+                if part_before.x > self.snake[number].x:
+                    self.flipped_snake_tail = pygame.transform.rotate(self.snake_tail, 180)
+                    print("Horizontal", self.snake[number])
+                if part_before.y != self.snake[number].y:
+                    self.flipped_snake_body = pygame.transform.rotate(self.snake_body, 90)
+                if part_before.y > self.snake[number].y:
+                    self.flipped_snake_tail = pygame.transform.rotate(self.snake_tail, 90)
+                if part_before.y < self.snake[number].y:
+                    self.flipped_snake_tail = pygame.transform.rotate(self.snake_tail, 270)
+                    print("vertical", self.snake[number])
                 self.snake[number].x = part_before.x
                 self.snake[number].y = part_before.y
 
@@ -145,7 +177,7 @@ class Game:
             snake_detected = helper_functions.is_point_in_snake(snake_part, self.snake[0].x, self.snake[0].y)
             if snake_detected:
                 print("Game over")
-                sys.exit()
+                self.screen = pygame.display.set_mode(self.size)
 
         snake_body = self.snake[1:]
         for snake_part in snake_body:
@@ -153,7 +185,7 @@ class Game:
                                                                 self.snake[0].y)
             if snake_detected:
                 print("Game over")
-                sys.exit()
+                self.screen = pygame.display.set_mode(self.size)
 
         snake_body = self.snake[1:]
         for snake_part in snake_body:
@@ -161,7 +193,7 @@ class Game:
                                                                 + self.snake[0].height)
             if snake_detected:
                 print("Game over")
-                sys.exit()
+                self.screen = pygame.display.set_mode(self.size)
 
         snake_body = self.snake[1:]
         for snake_part in snake_body:
@@ -169,7 +201,7 @@ class Game:
                                                                 self.snake[0].y + self.snake[0].height)
             if snake_detected:
                 print("Game over")
-                sys.exit()
+                self.screen = pygame.display.set_mode(self.size)
 
     def run(self):
 

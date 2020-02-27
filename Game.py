@@ -14,32 +14,38 @@ direction = [SPEED_X, SPEED_Y]
 screen = pygame.display.set_mode(SIZE)
 
 # Load image into apple variable
-apple = pygame.image.load(r"C:\Users\dmitrij.vlasov\Desktop\Snake\RedApple_1.png")
+apple = pygame.image.load("knowledge_graph_logo.png")
 # Update apple variable with new smaller image
 apple = pygame.transform.scale(apple, IMAGE_SIZE)
 
 # get apple's rectangle
 apple_rect = apple.get_rect()
 
+flipped_apple = pygame.transform.flip(apple, False, False)
+
 # resize generated apple rectangle
 apple_rect.center = (WIDTH // 2, HEIGHT // 2)
 
 while True:
     screen.fill(BLACK)
-    screen.blit(apple, apple_rect)
+    screen.blit(flipped_apple, apple_rect)
 
     if apple_rect.x <= 0:
-        direction = random.randint(1, 10), direction[1]
+        direction = random.randint(1, 5), direction[1]
         print(direction)
+        flipped_apple = pygame.transform.flip(apple, True, False)
     if apple_rect.x + apple_rect.width >= WIDTH:
-        direction = -random.randint(1, 10), direction[1]
+        direction = -random.randint(1, 5), direction[1]
         print(direction)
+        flipped_apple = pygame.transform.flip(apple, True, False)
     if apple_rect.y <= 0:
-        direction = direction[0], random.randint(1, 10)
+        direction = direction[0], random.randint(1, 5)
         print(direction)
+        flipped_apple = pygame.transform.flip(apple, True, False)
     if apple_rect.y + apple_rect.height >= HEIGHT:
-        direction = direction[0], -random.randint(1, 10)
+        direction = direction[0], -random.randint(1, 5)
         print(direction)
+        flipped_apple = pygame.transform.flip(apple, True, True)
 
     apple_rect.move_ip(direction)
 
