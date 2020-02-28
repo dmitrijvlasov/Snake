@@ -14,7 +14,7 @@ class Game:
     def __init__(self, width, height):
         self.SNAKE_SIZE = 20
         self.APPLE_SIZE = 20
-        self.MOVE = self.MOVE_X = self.MOVE_Y = 21
+        self.MOVE = self.MOVE_X = self.MOVE_Y = 20
         self.snake = []
         self.snake_images = []
         self.width = width
@@ -32,39 +32,94 @@ class Game:
         self.move = False
         self.direction = 0, 0
         self.size = self.width, self.height
+        # create an window with provided size
         self.screen = pygame.display.set_mode(self.size)
-        self.snake_head = pygame.image.load("head.png")
-        self.snake_head = pygame.transform.scale(self.snake_head, (self.SNAKE_SIZE, self.SNAKE_SIZE))
-        self.flipped_snake_head = pygame.transform.rotate(self.snake_head, 0)
+        # load an image for a snake head
+        self.snake_head_left = pygame.image.load("head.png")
+        # update snake head image with new smaller size
+        self.snake_head_left = pygame.transform.scale(self.snake_head_left, (self.SNAKE_SIZE, self.SNAKE_SIZE))
+        self.snake_head_down = pygame.transform.rotate(self.snake_head_left, 90)
+        self.snake_head_right = pygame.transform.rotate(self.snake_head_left, 180)
+        self.snake_head_up = pygame.transform.rotate(self.snake_head_left, 270)
+        # load an image for a snake body with Horizontal position
         self.snake_horizontal_body = pygame.image.load("body.png")
+        # update snake body image with new smaller size
         self.snake_horizontal_body = pygame.transform.scale(self.snake_horizontal_body,
                                                             (self.SNAKE_SIZE, self.SNAKE_SIZE))
+        # load an image for a snake body with Vertical position
         self.snake_vertical_body = pygame.image.load("body_v.png")
+        # update snake body image with new smaller size
         self.snake_vertical_body = pygame.transform.scale(self.snake_vertical_body,
-                                                            (self.SNAKE_SIZE, self.SNAKE_SIZE))
-        # self.flipped_snake_body = pygame.transform.rotate(self.snake_body, 0)
-        self.snake_tail = pygame.image.load("tail.png")
-        self.snake_tail = pygame.transform.scale(self.snake_tail, (self.SNAKE_SIZE, self.SNAKE_SIZE))
-        self.flipped_snake_tail = pygame.transform.rotate(self.snake_tail, 0)
+                                                          (self.SNAKE_SIZE, self.SNAKE_SIZE))
+        # load an image for a left top corner
+        self.snake_left_top = pygame.image.load("left_top.png")
+        self.snake_left_top = pygame.transform.scale(self.snake_left_top, (self.SNAKE_SIZE, self.SNAKE_SIZE))
+        self.snake_left_bottom = pygame.image.load("left_bottom.png")
+        self.snake_left_bottom = pygame.transform.scale(self.snake_left_bottom, (self.SNAKE_SIZE, self.SNAKE_SIZE))
+        self.snake_right_bottom = pygame.image.load("right_bottom.png")
+        self.snake_right_bottom = pygame.transform.scale(self.snake_right_bottom, (self.SNAKE_SIZE, self.SNAKE_SIZE))
+        self.snake_right_top = pygame.image.load("right_top.png")
+        self.snake_right_top = pygame.transform.scale(self.snake_right_top, (self.SNAKE_SIZE, self.SNAKE_SIZE))
+        # load an image for a snake tail
+        self.snake_tail_left = pygame.image.load("tail.png")
+        self.snake_tail_left = pygame.transform.scale(self.snake_tail_left, (self.SNAKE_SIZE, self.SNAKE_SIZE))
+        self.snake_tail_down = pygame.transform.rotate(self.snake_tail_left, 90)
+        self.snake_tail_right = pygame.transform.rotate(self.snake_tail_left, 180)
+        self.snake_tail_up = pygame.transform.rotate(self.snake_tail_left, 270)
 
         # create snake elements
         for index in range(0, 10):
             self.new_part = pygame.Rect((self.width // 2 + (self.MOVE * index)), self.height // 2, self.SNAKE_SIZE,
                                         self.SNAKE_SIZE)
             self.snake.append(self.new_part)
-            self.snake_images.append("Horizontal")
+            self.snake_images.append("Left")
 
     def draw_snake(self):
         for index, snake_part in enumerate(self.snake):
             if index == 0:
-                self.screen.blit(self.flipped_snake_head, snake_part)
+                if self.snake_images[index] == "Left":
+                    self.screen.blit(self.snake_head_left, snake_part)
+                if self.snake_images[index] == "Right":
+                    self.screen.blit(self.snake_head_right, snake_part)
+                if self.snake_images[index] == "Up":
+                    self.screen.blit(self.snake_head_up, snake_part)
+                if self.snake_images[index] == "Down":
+                    self.screen.blit(self.snake_head_down, snake_part)
+
             elif index == len(self.snake) - 1:
-                self.screen.blit(self.flipped_snake_tail, snake_part)
+                if self.snake_images[index] == "Left":
+                    self.screen.blit(self.snake_tail_left, snake_part)
+                if self.snake_images[index] == "Right":
+                    self.screen.blit(self.snake_tail_right, snake_part)
+                if self.snake_images[index] == "Up":
+                    self.screen.blit(self.snake_tail_up, snake_part)
+                if self.snake_images[index] == "Down":
+                    self.screen.blit(self.snake_tail_down, snake_part)
             else:
-                if self.snake_images[index] == "Horizontal":
-                    self.screen.blit(self.snake_horizontal_body, snake_part)
-                if self.snake_images[index] == "Vertical":
-                    self.screen.blit(self.snake_vertical_body, snake_part)
+                part_before = self.snake_images[index - 1]
+                part_after = self.snake_images[index + 1]
+
+                if part_before == "Down" and self.snake_images[index] == "Left" and part_after == "Left":
+                    self.screen.blit(self.snake_left_top, snake_part)
+                elif part_before == "Right" and self.snake_images[index] == "Down" and part_after == "Down":
+                    self.screen.blit(self.snake_left_bottom, snake_part)
+                elif part_before == "Up" and self.snake_images[index] == "Right" and part_after == "Right":
+                    self.screen.blit(self.snake_right_bottom, snake_part)
+                elif part_before == "Left" and self.snake_images[index] == "Up" and part_after == "Up":
+                    self.screen.blit(self.snake_right_top, snake_part)
+                elif part_before == "Up" and self.snake_images[index] == "Left" and part_after == "Left":
+                    self.screen.blit(self.snake_left_bottom, snake_part)
+                elif part_before == "Right" and self.snake_images[index] == "Up" and part_after == "Up":
+                    self.screen.blit(self.snake_left_top, snake_part)
+                elif part_before == "Down" and self.snake_images[index] == "Right" and part_after == "Right":
+                    self.screen.blit(self.snake_right_top, snake_part)
+                elif part_before == "Left" and self.snake_images[index] == "Down" and part_after == "Down":
+                    self.screen.blit(self.snake_right_bottom, snake_part)
+                else:
+                    if self.snake_images[index] == "Left" or self.snake_images[index] == "Right":
+                        self.screen.blit(self.snake_horizontal_body, snake_part)
+                    if self.snake_images[index] == "Up" or self.snake_images[index] == "Down":
+                        self.screen.blit(self.snake_vertical_body, snake_part)
 
     def check_button_pressed(self):
         for event in pygame.event.get():
@@ -76,38 +131,54 @@ class Game:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:
                 self.move = True
                 self.direction = -self.MOVE_X, 0
-                self.flipped_snake_head = pygame.transform.rotate(self.snake_head, 0)
-                self.flipped_snake_tail = pygame.transform.rotate(self.snake_tail, 0)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
                 self.move = True
                 self.direction = self.MOVE_X, 0
-                self.flipped_snake_head = pygame.transform.rotate(self.snake_head, 180)
-                self.flipped_snake_tail = pygame.transform.rotate(self.snake_tail, 180)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
                 self.move = True
                 self.direction = 0, -self.MOVE_Y
-                self.flipped_snake_head = pygame.transform.rotate(self.snake_head, 270)
-                self.flipped_snake_tail = pygame.transform.rotate(self.snake_tail, 270)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
                 self.move = True
                 self.direction = 0, self.MOVE_Y
-                self.flipped_snake_head = pygame.transform.rotate(self.snake_head, 90)
-                self.flipped_snake_tail = pygame.transform.rotate(self.snake_tail, 90)
 
     def move_snake(self):
         for number in reversed(range(0, len(self.snake))):
             if number == 0:
                 self.snake[number].move_ip(self.direction[0], self.direction[1])
+                if self.direction[0] < 0:
+                    self.snake_images[number] = "Left"
+                if self.direction[0] > 0:
+                    self.snake_images[number] = "Right"
+                if self.direction[1] < 0:
+                    self.snake_images[number] = "Up"
+                if self.direction[1] > 0:
+                    self.snake_images[number] = "Down"
+
+            elif number == -1:
+                part_before = self.snake[number - 1]
+
+                if part_before.x < self.snake[number].x:
+                    self.snake_images[number] = "Left"
+                if part_before.x > self.snake[number].x:
+                    self.snake_images[number] = "Right"
+                if part_before.y < self.snake[number].y:
+                    self.snake_images[number] = "Up"
+                if part_before.y > self.snake[number].y:
+                    self.snake_images[number] = "Down"
+
+                self.snake[number].x = part_before.x
+                self.snake[number].y = part_before.y
             else:
                 part_before = self.snake[number - 1]
 
-                if part_before.x != self.snake[number].x:
-                    self.snake_images[number] = "Horizontal"
-                    # print("Horizontal", self.snake[number])
-
-                if part_before.y != self.snake[number].y:
-                    self.snake_images[number] = "Vertical"
-                    # print("vertical", self.snake[number])
+                if part_before.x < self.snake[number].x:
+                    self.snake_images[number] = "Left"
+                if part_before.x > self.snake[number].x:
+                    self.snake_images[number] = "Right"
+                if part_before.y < self.snake[number].y:
+                    self.snake_images[number] = "Up"
+                if part_before.y > self.snake[number].y:
+                    self.snake_images[number] = "Down"
 
                 self.snake[number].x = part_before.x
                 self.snake[number].y = part_before.y
