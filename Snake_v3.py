@@ -75,7 +75,6 @@ class Game:
             self.snake_images.append("Left")
 
     def draw_snake(self):
-        print(self.snake_images)
         for index, snake_part in enumerate(self.snake):
             if index == 0:
                 if self.snake_images[index] == "Left":
@@ -150,6 +149,22 @@ class Game:
                     self.screen.blit(self.snake_vertical_body, snake_part)
                 elif part_before == "Down" and self.snake_images[index] == "Down" and part_after == "Right":
                     self.screen.blit(self.snake_vertical_body, snake_part)
+                elif part_before == "Left" and self.snake_images[index] == "Down" and part_after == "Left":
+                    self.screen.blit(self.snake_right_bottom, snake_part)
+                elif part_before == "Left" and self.snake_images[index] == "Up" and part_after == "Left":
+                    self.screen.blit(self.snake_right_top, snake_part)
+                elif part_before == "Right" and self.snake_images[index] == "Down" and part_after == "Right":
+                    self.screen.blit(self.snake_left_bottom, snake_part)
+                elif part_before == "Right" and self.snake_images[index] == "Up" and part_after == "Right":
+                    self.screen.blit(self.snake_left_top, snake_part)
+                elif part_before == "Down" and self.snake_images[index] == "Left" and part_after == "Down":
+                    self.screen.blit(self.snake_left_top, snake_part)
+                elif part_before == "Up" and self.snake_images[index] == "Left" and part_after == "Up":
+                    self.screen.blit(self.snake_left_bottom, snake_part)
+                elif part_before == "Down" and self.snake_images[index] == "Right" and part_after == "Down":
+                    self.screen.blit(self.snake_right_top, snake_part)
+                elif part_before == "Up" and self.snake_images[index] == "Right" and part_after == "Up":
+                    self.screen.blit(self.snake_right_bottom, snake_part)
                 elif part_before == self.snake_images[index] and self.snake_images[index] == part_after:
                     if self.snake_images[index] == "Left" or self.snake_images[index] == "Right":
                         self.screen.blit(self.snake_horizontal_body, snake_part)
