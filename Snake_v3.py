@@ -46,11 +46,8 @@ class Game:
         # update snake body image with new smaller size
         self.snake_horizontal_body = pygame.transform.scale(self.snake_horizontal_body,
                                                             (self.SNAKE_SIZE, self.SNAKE_SIZE))
-        # load an image for a snake body with Vertical position
-        self.snake_vertical_body = pygame.image.load("body_v.png")
         # update snake body image with new smaller size
-        self.snake_vertical_body = pygame.transform.scale(self.snake_vertical_body,
-                                                          (self.SNAKE_SIZE, self.SNAKE_SIZE))
+        self.snake_vertical_body = pygame.transform.rotate(self.snake_horizontal_body, 90)
         # load an image for a left top corner
         self.snake_left_top = pygame.image.load("left_top.png")
         self.snake_left_top = pygame.transform.scale(self.snake_left_top, (self.SNAKE_SIZE, self.SNAKE_SIZE))
