@@ -2,6 +2,7 @@ import pygame
 import sys
 import random
 import helper_functions
+import logging
 pygame.init()
 
 GREEN = 0, 128, 0
@@ -65,7 +66,7 @@ class Game:
         self.snake_tail_up = pygame.transform.rotate(self.snake_tail_left, 270)
 
         # create snake elements
-        for index in range(0, 10):
+        for index in range(0, 15):
             self.new_part = pygame.Rect((self.width // 2 + (self.MOVE * index)), self.height // 2, self.SNAKE_SIZE,
                                         self.SNAKE_SIZE)
             self.snake.append(self.new_part)
@@ -304,32 +305,12 @@ class Game:
             self.snake[0].y = snake_new_position[1]
 
     def snake_hit_it_self(self):
+        # print(self.snake)
+        snake_head = self.snake[0]
         snake_body = self.snake[1:]
-        for snake_part in snake_body:
-            snake_detected = helper_functions.is_point_in_snake(snake_part, self.snake[0].x, self.snake[0].y)
-            if snake_detected:
-                print("Game over")
 
-        snake_body = self.snake[1:]
-        for snake_part in snake_body:
-            snake_detected = helper_functions.is_point_in_snake(snake_part, self.snake[0].x + self.snake[0].width,
-                                                                self.snake[0].y)
-            if snake_detected:
-                print("Game over")
-
-        snake_body = self.snake[1:]
-        for snake_part in snake_body:
-            snake_detected = helper_functions.is_point_in_snake(snake_part, self.snake[0].x, self.snake[0].y
-                                                                + self.snake[0].height)
-            if snake_detected:
-                print("Game over")
-
-        snake_body = self.snake[1:]
-        for snake_part in snake_body:
-            snake_detected = helper_functions.is_point_in_snake(snake_part, self.snake[0].x + self.snake[0].width,
-                                                                self.snake[0].y + self.snake[0].height)
-            if snake_detected:
-                print("Game over")
+        if snake_head.collidelist(snake_body) != -1:
+            logging.info("Collided to body part")
 
     def run(self):
 
@@ -354,5 +335,7 @@ class Game:
             pygame.time.Clock().tick(FPS)
 
 
+FORMAT = '%(asctime)s: %(message)s'
+logging.basicConfig(level=logging.DEBUG, format=FORMAT)
 game = Game(800, 600)
 game.run()
